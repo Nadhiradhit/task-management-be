@@ -24,7 +24,7 @@ export class AuthService {
         data: {
           ...data,
           password: hashedPassword,
-          id: Math.random().toString(36).substring(2, 14),
+          id: `USR-${Math.floor(100000 + Math.random() * 900000)}`,
           role: data.role || "USER",
         },
       });
@@ -64,6 +64,28 @@ export class AuthService {
       data: {
         ...userData,
       },
+      message: "User logged in successfully",
+      status: "Success",
+    };
+  }
+
+  async logout(userId: string) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { token: null },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        is_active: true,
+        token: true,
+      },
+    });
+    return {
+      data: user,
+      message: "User logged out successfully",
+      status: "Success",
     };
   }
 
@@ -78,7 +100,11 @@ export class AuthService {
         is_active: true,
       },
     });
-    return user;
+    return {
+      data: user,
+      message: "Success get user data",
+      status: "Success",
+    }
   }
 
   async getAllUsers(userId: string) {
@@ -105,6 +131,29 @@ export class AuthService {
     return {
       data: users,
       message: "Success get all users",
+      status: "Success",
+    };
+  }
+
+  async deleteUser(userId: string) {
+    const user = await this.prisma.user.delete({
+      where: { id: userId },
+    });
+    return {
+      data: user,
+      message: "User deleted successfully",
+      status: "Success",
+    };
+  }
+
+  async updateUser(userId: string, data: any) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data,
+    });
+    return {
+      data: user,
+      message: "User updated successfully",
       status: "Success",
     };
   }

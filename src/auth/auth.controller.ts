@@ -5,7 +5,7 @@ import {
   Get,
   UseGuards,
   Request,
-  UnauthorizedException,
+  Delete,
 } from "@nestjs/common";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
@@ -27,6 +27,12 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post("logout")
+  async logout(@Request() req) {
+    return this.authService.logout(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get("profile")
   async getProfile(@Request() req) {
     return this.authService.getUserData(req.user.id);
@@ -36,5 +42,17 @@ export class AuthController {
   @Get("users")
   async getAllUsers(@Request() req) {
     return this.authService.getAllUsers(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete("delete")
+  async deleteUser(@Request() req) {
+    return this.authService.deleteUser(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("update")
+  async updateUser(@Request() req, @Body() data: any) {
+    return this.authService.updateUser(req.user.id, data);
   }
 }

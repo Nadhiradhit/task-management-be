@@ -23,6 +23,7 @@ model user {
   role        Role        @default(USER)
   created_at  DateTime    @default(now())
   updated_at  DateTime    @updatedAt
+  boards      board[]     @relation("UserBoards")
 }
 
 enum Role {
@@ -30,6 +31,12 @@ enum Role {
   ADMIN
 }
 
-model Board {
+model board {
   id          String      @id @unique @db.VarChar(12)
+  name        String
+  created_by   String
+  user        user        @relation("UserBoards", fields: [created_by], references: [id])
+  is_public   Boolean
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
 }

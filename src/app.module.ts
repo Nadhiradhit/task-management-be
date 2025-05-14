@@ -5,10 +5,12 @@ import { AuthModule } from "./auth/auth.module";
 import { BoardModule } from "./board/board.module";
 import { PrismaService } from "./prisma/prisma.service";
 import { PrismaModule } from "./prisma/prisma.module";
+import { BoarduserController } from "./boarduser/boarduser.controller";
+import { BoarduserModule } from "./boarduser/boarduser.module";
 
 @Module({
-  imports: [AuthModule, BoardModule, PrismaModule],
-  controllers: [AppController],
+  imports: [AuthModule, BoardModule, PrismaModule, BoarduserModule],
+  controllers: [AppController, BoarduserController],
   providers: [AppService],
 })
 export class AppModule {}

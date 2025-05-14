@@ -23,7 +23,10 @@ model user {
   role        Role        @default(USER)
   created_at  DateTime    @default(now())
   updated_at  DateTime    @updatedAt
+
+  // Relation
   boards      board[]     @relation("UserBoards")
+  boarduser boarduser[]
 }
 
 enum Role {
@@ -35,8 +38,44 @@ model board {
   id          String      @id @unique @db.VarChar(12)
   name        String
   created_by   String
-  user        user        @relation("UserBoards", fields: [created_by], references: [id])
+  user        user        @relation("UserBoards", fields: [created_by], references: [id], onDelete: Cascade)
   is_public   Boolean
   created_at  DateTime    @default(now())
   updated_at  DateTime    @updatedAt
+
+  // Relation
+  boarduser boarduser[]
 }
+
+model boarduser {
+  user_id     String    @db.VarChar(12)
+  board_id    String    @db.VarChar(12)
+
+  // Relation
+  user        user      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  board       board     @relation(fields: [board_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, board_id])
+}
+
+model column {
+  id          String      @id @unique @db.VarChar(12)
+  board_id    String      @unique @db.VarChar(12)
+  name        String
+  order       String
+
+  // Relation
+  task        task[]
+}
+
+model task {
+  id          String      @id @unique @db.VarChar(12)
+  coloumn_id  String      @unique @db.VarChar(12)
+  title       String
+  description String
+  assigned_to String
+
+  // Relation
+  coloumn     column      @relation(fields: [coloumn_id], references: [id], onDelete: Cascade)
+}
+

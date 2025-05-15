@@ -9,10 +9,13 @@ import { BoarduserController } from "./boarduser/boarduser.controller";
 import { BoarduserModule } from "./boarduser/boarduser.module";
 import { ColumnController } from './column/column.controller';
 import { ColumnModule } from './column/column.module';
+import { TaskController } from './task/task.controller';
+import { TaskService } from './task/task.service';
+import { TaskModule } from './task/task.module';
 
 @Module({
-  imports: [AuthModule, BoardModule, PrismaModule, BoarduserModule, ColumnModule],
-  controllers: [AppController, BoarduserController, ColumnController],
-  providers: [AppService],
+  imports: [AuthModule, BoardModule, PrismaModule, BoarduserModule, ColumnModule, TaskModule],
+  controllers: [AppController, BoarduserController, ColumnController, TaskController],
+  providers: [AppService, TaskService],
 })
 export class AppModule {}

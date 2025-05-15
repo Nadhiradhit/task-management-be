@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Param
 } from "@nestjs/common";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
@@ -49,10 +50,11 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete("delete")
-  async deleteUser(@Request() req) {
-    return this.authService.deleteUser(req.user.id);
+  @Delete(":id")
+  async deleteUser(@Request() req, @Param("id") id: string) {
+    return this.authService.deleteUser(id);
   }
+  
 
   @UseGuards(JwtAuthGuard)
   @Post("update")

@@ -58,11 +58,17 @@ model boarduser {
   @@unique([user_id, board_id])
 }
 
+enum ColumnStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
 model column {
   id          String      @id @unique @db.VarChar(12)
-  board_id    String      @unique @db.VarChar(12)
+  board_id    String      @db.VarChar(12)
   name        String
-  order       String
+  order       ColumnStatus   @default(TODO)
 
   // Relation
   task        task[]
@@ -70,12 +76,12 @@ model column {
 
 model task {
   id          String      @id @unique @db.VarChar(12)
-  coloumn_id  String      @unique @db.VarChar(12)
+  column_id   String      @db.VarChar(12)
   title       String
   description String
   assigned_to String
 
   // Relation
-  coloumn     column      @relation(fields: [coloumn_id], references: [id], onDelete: Cascade)
+  column      column      @relation(fields: [column_id], references: [id], onDelete: Cascade)
 }
 

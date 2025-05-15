@@ -6,6 +6,8 @@ import {
   UseGuards,
   Request,
   Delete,
+  HttpCode,
+  HttpStatus,
 } from "@nestjs/common";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
@@ -17,11 +19,13 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("register")
+  @HttpCode(HttpStatus.CREATED)
   async register(@Body() body: RegisterDto) {
     return this.authService.register(body);
   }
 
   @Post("login")
+  @HttpCode(HttpStatus.OK)
   async login(@Body() body: LoginDto) {
     return this.authService.validateUser(body.email, body.password);
   }

@@ -26,11 +26,18 @@ export class AuthService {
           password: hashedPassword,
           id: `USR-${Math.floor(100000 + Math.random() * 900000)}`,
           role: data.role || "USER",
+          token: null,
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          role: true,
+          is_active: true,
         },
       });
-      const { password, ...result } = user;
       return {
-        data: result,
+        data: user,
         message: "User registered successfully",
         status: "Success",
       };
@@ -47,23 +54,39 @@ export class AuthService {
   async validateUser(email: string, password: string) {
     const user = await this.prisma.user.findUnique({
       where: { email },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        password: true,
+        token: true,
+      },
     });
+
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException("Invalid credentials");
     }
-    const payload = { sub: user.id, email: user.email, role: user.role };
-    const token = this.jwtService.sign(payload);
 
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: { token },
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const token = this.jwtService.sign(payload, {
+      expiresIn: "24h",
     });
 
-    const { password: _, ...userData } = user;
-    return {
-      data: {
-        ...userData,
+    const updatedUser = await this.prisma.user.update({
+      where: { id: user.id },
+      data: { token },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        token: true,
       },
+    });
+
+    return {
+      data: updatedUser,
       message: "User logged in successfully",
       status: "Success",
     };
@@ -104,7 +127,7 @@ export class AuthService {
       data: user,
       message: "Success get user data",
       status: "Success",
-    }
+    };
   }
 
   async getAllUsers(userId: string) {
